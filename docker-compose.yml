@@ -1,0 +1,41 @@
+version: "2.4"
+
+services:
+  apache:
+    image: localhost:5000/httpd:latest
+    ports:
+      - "8080:80"
+    networks:
+      - nginx_net
+    volumes:
+      - html:/usr/local/apache2/htdocs/
+  nginx:
+    image: localhost:5000/epam-nginx:latest
+    ports: 
+      - "80:80"
+    networks:
+      - nginx_net
+networks:
+  nginx_net:
+    #driver: macvlan
+    enable_ipv6: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.0.0/24
+          gateway: 10.0.0.1
+  apache_net:
+    #driver: macvlan
+    enable_ipv6: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.1.0/24
+          gateway: 10.0.1.1
+volumes:
+  html:
+    driver: local
+    driver_opts:
+       o: bind
+       type: none
+       device: html
